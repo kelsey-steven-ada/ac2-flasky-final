@@ -40,8 +40,8 @@ def get_all_cats():
 @cats_bp.route("/<cat_id>", methods=["GET"])
 def get_cat_by_id(cat_id):
     cat_to_return = validate_id_and_return_cat(cat_id)
-    cat_response = []
-    cat_response.append({
+
+    return jsonify({
         "id": cat_to_return.id,
         "name": cat_to_return.name,
         "breed": cat_to_return.breed,
@@ -49,7 +49,29 @@ def get_cat_by_id(cat_id):
         "size": cat_to_return.size,
         "likes_catnip": cat_to_return.likes_catnip,
     })
-    return jsonify(cat_response)
+
+@cats_bp.route("/<cat_id>", methods=["PUT"])
+def replace_cat_with_id(cat_id):
+    cat_data = request.get_json()
+    cat_to_update = validate_id_and_return_cat(cat_id)
+
+    cat_to_update.name = cat_data["name"],
+    cat_to_update.breed = cat_data["breed"],
+    cat_to_update.color = cat_data["color"],
+    cat_to_update.size = cat_data["size"],
+    cat_to_update.likes_catnip = cat_data["likes_catnip"]
+
+    db.session.commit()
+
+    return make_response(f"Cat {cat_to_update.name} updated", 200)
+
+@cats_bp.route("/<cat_id>", methods=["DELETE"])
+def delete_cat_by_id(cat_id):
+    cat_to_delete = validate_id_and_return_cat(cat_id)
+    db.session.delete(cat_to_delete)
+    db.session.commit()
+
+    return make_response(f"Cat {cat_to_delete.name} deleted", 200)
 
 def validate_id_and_return_cat(cat_id):
     try:
@@ -58,9 +80,8 @@ def validate_id_and_return_cat(cat_id):
         msg = f"Cat's id {cat_id} is not an integer"
         abort(make_response({"message": msg}, 400))
 
-
     cat = Cat.query.get(cat_id_as_int)
-    if cat.id == cat_id_as_int:
+    if cat:
         return cat
     
     abort(make_response({"message": f"Cat with id {cat_id} not found"}, 404))
