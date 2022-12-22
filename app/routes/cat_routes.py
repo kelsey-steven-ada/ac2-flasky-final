@@ -22,10 +22,30 @@ def create_cat():
     return make_response(f"Cat {new_cat.name} created", 201)
 
 @cats_bp.route("", methods=["GET"])
-def get_all_cats():
-    all_cats = Cat.query.all()
+def get_cats_optional_query():
+    cat_query = Cat.query
+
+    breed_query = request.args.get("breed")
+    if breed_query:
+        # cat_query = cat_query.filter_by(breed=breed_query)
+        # cat_query = cat_query.filter(Cat.breed.contains(breed_query))
+        cat_query = cat_query.filter(Cat.breed.ilike(f"%{breed_query}%"))
+
+    catnip_query = request.args.get("likes_catnip")
+    if catnip_query:
+        cat_query = cat_query.filter_by(likes_catnip=catnip_query)
+
+    sort_query = request.args.get("sort")
+    if sort_query:
+        if sort_query == "desc":
+            cat_query = cat_query.order_by(Cat.size.desc())
+        else:
+            cat_query = cat_query.order_by(Cat.size.asc())
+        
+
+    cats = cat_query.all()
     cat_response = []
-    for cat in all_cats:
+    for cat in cats:
         cat_response.append({
             "id": cat.id,
             "name": cat.name,
