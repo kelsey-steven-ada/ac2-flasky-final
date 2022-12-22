@@ -27,8 +27,13 @@ def get_cats_optional_query():
 
     breed_query = request.args.get("breed")
     if breed_query:
+        # Case sensitive, exact match
         # cat_query = cat_query.filter_by(breed=breed_query)
+
+        # Case sensitive, partial match
         # cat_query = cat_query.filter(Cat.breed.contains(breed_query))
+
+        # Case insensitive, partial match
         cat_query = cat_query.filter(Cat.breed.ilike(f"%{breed_query}%"))
 
     catnip_query = request.args.get("likes_catnip")
