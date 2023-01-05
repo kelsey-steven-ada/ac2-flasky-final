@@ -7,3 +7,25 @@ class Cat(db.Model):
     color = db.Column(db.String, nullable=False)
     size = db.Column(db.String, nullable=False)
     likes_catnip = db.Column(db.Boolean, nullable=False)
+
+    def to_dict(self):
+        cat_dict = {}
+        cat_dict["id"] = self.id
+        cat_dict["name"] = self.name
+        cat_dict["breed"] = self.breed
+        cat_dict["color"] = self.color
+        cat_dict["size"] = self.size
+        cat_dict["likes_catnip"] = self.likes_catnip
+
+        return cat_dict
+
+    @classmethod
+    def from_dict(cls, cat_data):
+        new_cat = Cat(
+            name = cat_data["name"],
+            breed = cat_data["breed"],
+            color = cat_data["color"],
+            size = cat_data["size"],
+            likes_catnip = cat_data["likes_catnip"]
+        )
+        return new_cat
