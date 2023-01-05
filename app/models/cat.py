@@ -7,6 +7,8 @@ class Cat(db.Model):
     color = db.Column(db.String, nullable=False)
     size = db.Column(db.String, nullable=False)
     likes_catnip = db.Column(db.Boolean, nullable=False)
+    caretaker_id = db.Column(db.Integer, db.ForeignKey("caretaker.id"))
+    caretaker = db.relationship("Caretaker", back_populates="cats")
 
     def to_dict(self):
         cat_dict = {}

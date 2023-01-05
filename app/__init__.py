@@ -20,13 +20,16 @@ def create_app(test_config=None):
     else:
         app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("SQLALCHEMY_DATABASE_URI")
 
-
     from app.models.cat import Cat
+    from app.models.caretaker import Caretaker
 
     db.init_app(app)
     migrate.init_app(app, db)
 
     from .routes.cat_routes import cats_bp
     app.register_blueprint(cats_bp)
+
+    from .routes.caretaker_routes import caretakers_bp
+    app.register_blueprint(caretakers_bp)
 
     return app

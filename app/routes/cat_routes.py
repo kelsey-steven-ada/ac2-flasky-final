@@ -1,7 +1,7 @@
 from app import db
 from app.models.cat import Cat
 from app.routes.routes_helper import validate_model
-from flask import Blueprint, jsonify, abort, make_response, request
+from flask import Blueprint, jsonify, make_response, request
 
 cats_bp = Blueprint("cats_bp", __name__, url_prefix="/cats")
 
@@ -40,7 +40,6 @@ def get_cats_optional_query():
             cat_query = cat_query.order_by(Cat.size.desc())
         else:
             cat_query = cat_query.order_by(Cat.size.asc())
-        
 
     cats = cat_query.all()
     cat_response = []
