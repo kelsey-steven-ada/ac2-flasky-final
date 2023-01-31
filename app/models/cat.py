@@ -19,6 +19,9 @@ class Cat(db.Model):
         cat_dict["size"] = self.size
         cat_dict["likes_catnip"] = self.likes_catnip
 
+        if self.caretaker:
+            cat_dict["caretaker"] = self.caretaker.name
+
         return cat_dict
 
     @classmethod
