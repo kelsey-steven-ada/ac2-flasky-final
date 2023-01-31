@@ -43,15 +43,21 @@ def get_caretaker_by_id(caretaker_id):
 @caretakers_bp.route("/<caretaker_id>/cats", methods=["POST"])
 def add_new_cat_to_caretaker(caretaker_id):
     caretaker = validate_model(Caretaker, caretaker_id)
-
     request_body = request.get_json()
-    new_cat = Cat.from_dict(request_body)
-    new_cat.caretaker = caretaker
 
-    db.session.add(new_cat)
+    new_cats = []
+    cat_names = []
+    for cat in request_body:
+        new_cat = Cat.from_dict(cat)
+        new_cat.caretaker = caretaker
+
+        new_cats.append(new_cat)
+        cat_names.append(cat["name"])
+
+    db.session.add_all(new_cats)
     db.session.commit()
 
-    message = f"Cat {new_cat.name} created with Caretaker {caretaker.name}"
+    message = f"Cat(s) {','.join(cat_names)} created with Caretaker {caretaker.name}"
     return make_response(jsonify(message), 201)
 
 @caretakers_bp.route("/<caretaker_id>/cats", methods=["GET"])

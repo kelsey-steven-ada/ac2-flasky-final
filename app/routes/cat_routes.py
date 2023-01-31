@@ -8,12 +8,17 @@ cats_bp = Blueprint("cats_bp", __name__, url_prefix="/cats")
 @cats_bp.route("", methods=["POST"])
 def create_cat():
     cat_data = request.get_json()
-    new_cat = Cat.from_dict(cat_data)
 
-    db.session.add(new_cat)
+    new_cats = []
+    cat_names = []
+    for cat in cat_data:
+        new_cats.append(Cat.from_dict(cat))
+        cat_names.append(cat["name"])
+
+    db.session.add_all(new_cats)
     db.session.commit()
 
-    return make_response(f"Cat {new_cat.name} created", 201)
+    return make_response(f"Cat(s) {', '.join(cat_names)} created", 201)
 
 @cats_bp.route("", methods=["GET"])
 def get_cats_optional_query():
@@ -76,3 +81,11 @@ def delete_cat_by_id(cat_id):
     db.session.commit()
 
     return make_response(f"Cat {cat_to_delete.name} deleted", 200)
+
+@cats_bp.route("/<cat_id>/pet", methods=["PATCH"])
+def pet_cat_with_id(cat_id):
+    cat = validate_model(cat_id)
+    cat.pet_count += 1
+
+    db.session.commit()
+    return jsonify(cat.to_dict())

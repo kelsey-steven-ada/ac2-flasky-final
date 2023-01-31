@@ -6,7 +6,8 @@ class Cat(db.Model):
     breed = db.Column(db.String, nullable=False)
     color = db.Column(db.String, nullable=False)
     size = db.Column(db.String, nullable=False)
-    likes_catnip = db.Column(db.Boolean, nullable=False)
+    likes_catnip = db.Column(db.Boolean, nullable=False, default=True)
+    pet_count = db.Column(db.Integer, nullable=False, default=0)
     caretaker_id = db.Column(db.Integer, db.ForeignKey("caretaker.id"))
     caretaker = db.relationship("Caretaker", back_populates="cats")
 
@@ -18,6 +19,7 @@ class Cat(db.Model):
         cat_dict["color"] = self.color
         cat_dict["size"] = self.size
         cat_dict["likes_catnip"] = self.likes_catnip
+        cat_dict["pet_count"] = self.pet_count
 
         return cat_dict
 
@@ -27,7 +29,13 @@ class Cat(db.Model):
             name = cat_data["name"],
             breed = cat_data["breed"],
             color = cat_data["color"],
-            size = cat_data["size"],
-            likes_catnip = cat_data["likes_catnip"]
+            size = cat_data["size"]
         )
+
+        if "likes_catnip" in cat_data:
+            new_cat.likes_catnip = cat_data["likes_catnip"]
+
+        if "pet_count" in cat_data:
+            new_cat.pet_count = cat_data["pet_count"]
+
         return new_cat
