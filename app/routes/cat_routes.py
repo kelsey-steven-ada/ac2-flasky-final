@@ -84,7 +84,7 @@ def delete_cat_by_id(cat_id):
 
 @cats_bp.route("/<cat_id>/pet", methods=["PATCH"])
 def pet_cat_with_id(cat_id):
-    cat = validate_model(cat_id)
+    cat = validate_model(Cat, cat_id)
     cat.pet_count += 1
 
     db.session.commit()
