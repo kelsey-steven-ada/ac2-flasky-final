@@ -18,7 +18,12 @@ def create_cat():
     db.session.add_all(new_cats)
     db.session.commit()
 
-    return make_response(f"Cat(s) {', '.join(cat_names)} created", 201)
+    cats = Cat.query.all()
+    cat_response = []
+    for cat in cats:
+        cat_response.append(cat.to_dict())
+
+    return make_response(jsonify(cat_response), 201)
 
 @cats_bp.route("", methods=["GET"])
 def get_cats_optional_query():
