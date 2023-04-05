@@ -10,10 +10,8 @@ def create_cat():
     cat_data = request.get_json()
 
     new_cats = []
-    cat_names = []
     for cat in cat_data:
         new_cats.append(Cat.from_dict(cat))
-        cat_names.append(cat["name"])
 
     db.session.add_all(new_cats)
     db.session.commit()
